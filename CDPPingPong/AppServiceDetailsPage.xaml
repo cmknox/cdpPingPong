@@ -1,0 +1,28 @@
+﻿<Page
+    x:Class="CDPPingPong.AppServiceDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CDPPingPong"
+    xmlns:controls="using:CDPPingPong.Controls"
+    
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton x:Name="SettingsButton" Label="Settings" Icon="Setting" Click="SettingsButton_Click" />
+        </CommandBar>
+    </Page.BottomAppBar>
+    <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" >
+        <controls:AppServiceDetailsControl DataContext="{x:Bind SelectedAppService, Mode=OneWay}" Loaded="AppServiceDetailsControl_Loaded">
+        </controls:AppServiceDetailsControl>
+    </ScrollViewer>
+</Page>

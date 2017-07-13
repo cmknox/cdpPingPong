@@ -1,0 +1,303 @@
+﻿<Page
+    x:Class="CDPPingPong.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:CDPPingPong"
+    xmlns:controls="using:CDPPingPong.Controls"
+    NavigationCacheMode="Enabled"    
+    
+    mc:Ignorable="d">
+    <Page.Transitions>
+        <TransitionCollection>
+            <EntranceThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Page.Resources>
+        <DataTemplate x:Name="RemoteSystemListViewTemplate" x:DataType="local:RemoteSystemInfo">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Grid.RowSpan="2" Width="40" Height="40" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="LightGray" />
+                <Rectangle x:Name="Ellipse"
+                         Grid.RowSpan="2"
+                         Width ="32"
+                         Height="32"
+                         Margin="6"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         >
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{x:Bind KindImage}" Stretch="Uniform" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           Text="{x:Bind Name}" 
+                           x:Phase="1"  
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12,6,0,0"/>
+                <TextBlock  Grid.Column="1"
+                            Grid.Row="1"
+                            Text="{x:Bind Proximal, Mode=OneWay}" 
+                            x:Phase="2"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Margin="12,0,0,6"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Name="AppServiceListViewTemplate" x:DataType="local:AppServiceInfo">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Grid.RowSpan="2" Width="40" Height="40" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Fill="LightGray" />
+                <Rectangle x:Name="Ellipse"
+                         Grid.RowSpan="2"
+                         Width ="32"
+                         Height="32"
+                         Margin="6"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         >
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{x:Bind KindImage}" Stretch="Uniform" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           Text="{x:Bind PackageFamilyName}" 
+                           x:Phase="1"  
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12,6,0,0"/>
+                <TextBlock  Grid.Column="1"
+                            Grid.Row="1"
+                            Text="{x:Bind AppServiceName, Mode=OneWay}" 
+                            x:Phase="2"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Margin="12,0,0,6"/>
+            </Grid>
+        </DataTemplate>
+        <Flyout x:Key="AppLinkFlyout">
+            <StackPanel>
+                <HyperlinkButton Content = "Roman App Uri" NavigateUri = "https://project-rome.github.io/app/" />
+            </StackPanel>
+        </Flyout>
+    </Page.Resources>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <!--<AppBarButton x:Name="AddItemBtn" Label="Add Item">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xeC19;" />
+                </AppBarButton.Icon>
+            </AppBarButton>-->
+            <!--<AppBarButton x:Name="ToastButton" Label="Toast" Icon="Message" />-->
+
+            <AppBarButton x:Name="LogsButton" Label="Logs" Icon="AlignLeft" Click="LogsButton_OnClick" />
+            <AppBarButton x:Name="ShareAcrossDevicesSettingStateButton" Label="Setting state" Icon="AlignRight" Click="ShareAcrossDevicesSettingStateButton_Click" />
+            <AppBarButton x:Name="LinkButton" Label="App Link" Icon="Link" Flyout="{StaticResource AppLinkFlyout}" />
+            <AppBarButton x:Name="RefreshButton" Label="Refresh" Icon="Refresh" Click="RefreshButton_Click" />
+            <AppBarButton x:Name="SettingsButton" Label="Settings" Icon="Setting" Click="SettingsButton_Click" />
+
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PageSizeStatesGroup"
+                              CurrentStateChanged="PageSizeStatesGroup_OnCurrentStateChanged">
+
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720"  />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RemoteSystemListView.Visibility" Value="Visible" />
+                        <Setter Target="DetailContentPresenter.Visibility" Value="Visible" />
+                        <Setter Target="MasterColumn.Width" Value="320" />
+                        <Setter Target="DetailColumn.Width" Value="*"/>
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"  />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RemoteSystemListView.Visibility" Value="Visible" />
+                        <Setter Target="DetailContentPresenter.Visibility" Value="Collapsed" />
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="MasterDetailsStatesGroup">
+
+                <VisualState x:Name="MasterState">
+                    <VisualState.Setters>
+                        <Setter Target="RemoteSystemListView.IsItemClickEnabled" Value="True" />
+                        <!--#region App Bar Commands-->
+                        <Setter Target="RefreshButton.Visibility" Value="Visible" />
+                        <!--#endregion-->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="MasterDetailsState">
+                    <VisualState.Setters>
+                        <Setter Target="RemoteSystemListView.IsItemClickEnabled" Value="False" />
+                        <!--#region App Bar Commands-->
+                        <Setter Target="RefreshButton.Visibility" Value="Visible" />
+                        <!--#endregion-->
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MasterColumn" Width="320"  />
+            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource SplitViewTogglePaneButtonStyle}" Click="Homeburger_OnClick"
+                />
+                    <TextBlock Text="Remote Systems" Margin="8,8,8,8"
+                           Style="{ThemeResource TitleTextBlockStyle}" />
+                </StackPanel>
+
+            </Border>
+            <StackPanel Orientation="Horizontal"  Margin="24,8,8,8" >
+                <ComboBox x:Name="TypeComboBox" Header="Discovery Type" PlaceholderText="Any" Width="130" SelectionChanged="TypeComboBox_OnSelectionChanged">
+                    <x:String>Any</x:String>
+                    <x:String>Cloud</x:String>
+                    <x:String>Proximal</x:String>
+                    <x:String>Spatially Proximal</x:String>
+                </ComboBox>
+
+                <ComboBox x:Name="KindComboBox" Header="System Kind" PlaceholderText="Any" Width="130" Margin="8,0,0,0" SelectionChanged="KindComboBox_OnSelectionChanged">
+                    <x:String>Any</x:String>
+                    <x:String>Desktop</x:String>
+                    <x:String>Holographic</x:String>
+                    <x:String>Hub</x:String>
+                    <x:String>Phone</x:String>
+                    <x:String>Xbox</x:String>
+                </ComboBox>
+            </StackPanel>
+            <ComboBox x:Name="UserComboBox" Header="User Kind" PlaceholderText="Same User" Width="130" Margin="8,0,0,0" SelectionChanged="UserComboBox_SelectionChanged">
+                <x:String>Same User</x:String>
+                <x:String>Anonymous</x:String>
+            </ComboBox>
+        </StackPanel>
+
+        <ListView x:Name="RemoteSystemListView" 
+                  SelectionMode="Single"
+                  SelectionChanged="RemoteSystemListView_OnSelectionChanged"
+                  IsItemClickEnabled="True"
+                  ShowsScrollingPlaceholders="False"
+                  ItemTemplate="{StaticResource RemoteSystemListViewTemplate}"
+                  ItemClick="RemoteSystemListView_OnItemClick"
+                  Grid.Row="1" Grid.Column="0"
+                  Margin="12,8,8,8">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <ListView x:Name="AppServiceListView" 
+                  SelectionMode="Single"
+                  SelectionChanged="AppServiceListView_OnSelectionChanged"
+                  IsItemClickEnabled="True"
+                  ShowsScrollingPlaceholders="False"
+                  ItemTemplate="{StaticResource AppServiceListViewTemplate}"
+                  ItemClick="AppServiceListView_OnItemClick"
+                  Grid.Row="2" Grid.Column="0"
+                  Margin="12,8,8,8">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <ContentPresenter
+                x:Name="DetailContentPresenter"
+                Grid.Column="1"
+                Grid.Row="0" Grid.RowSpan="2"
+                BorderThickness="1,0,0,0"
+                Padding="24,0"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                Content="{x:Bind RemoteSystemListView.SelectedItem, Mode=OneWay}"
+            Visibility="Collapsed">
+            <ContentPresenter.ContentTemplate>
+                <DataTemplate x:DataType="local:RemoteSystemInfo">
+                    <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" >
+                        <controls:RemoteSystemDetailsControl DataContext="{x:Bind}"></controls:RemoteSystemDetailsControl>
+                    </ScrollViewer>
+                </DataTemplate>
+            </ContentPresenter.ContentTemplate>
+            <ContentPresenter.ContentTransitions>
+                <TransitionCollection/>
+            </ContentPresenter.ContentTransitions>
+        </ContentPresenter>
+
+        <ContentPresenter
+                x:Name="AppServiceDetailContentPresenter"
+                Grid.Column="1"
+                Grid.Row="0" Grid.RowSpan="2"
+                BorderThickness="1,0,0,0"
+                Padding="24,0"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                Content="{x:Bind AppServiceListView.SelectedItem, Mode=OneWay}"
+            Visibility="Collapsed">
+            <ContentPresenter.ContentTemplate>
+                <DataTemplate x:DataType="local:AppServiceInfo">
+                    <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" >
+                        <controls:AppServiceDetailsControl DataContext="{x:Bind}"></controls:AppServiceDetailsControl>
+                    </ScrollViewer>
+                </DataTemplate>
+            </ContentPresenter.ContentTemplate>
+            <ContentPresenter.ContentTransitions>
+                <TransitionCollection/>
+            </ContentPresenter.ContentTransitions>
+        </ContentPresenter>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="24,4,4,4" x:Name="ErrorTextBlock" />
+        <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="24,4,4,4" x:Name="SettingStateTextBlock" />
+        <ListView Grid.Row="3" Grid.Column="0"  Grid.ColumnSpan="2" x:Name="StatusMessageListView" 
+                  SelectionMode="None"
+                  IsItemClickEnabled="False"
+                  Margin="12,4,4,4"
+                  Height="200"
+                  Visibility="Collapsed">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin"  Value="0,-8,0,-8" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <controls:HomeburgerPane x:Name="HomeburgerPane" Grid.ColumnSpan="2" Grid.RowSpan="3" Margin="352,3,-352,25" />
+
+    </Grid>
+</Page>
+
